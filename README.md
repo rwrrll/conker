@@ -15,7 +15,7 @@ the right engine with the right compose configuration.
 
 ## Set up
 
-1. Install: `TODO`
+1. Install: `curl get.co.nker.app | bash` (or compile from source if you prefer)
 2. Create a Conkerfile in your project directory: `conker init`
 3. Add at least one environment to `Conkerfile`
 
