@@ -1,20 +1,14 @@
-use serde_derive::Deserialize;
 use std::process::exit;
 use std::process::Command;
 
-#[derive(Deserialize, Debug)]
-#[allow(non_snake_case)]
 pub struct DockerContext {
-    Name: String,
 }
 
 impl DockerContext {
     pub fn apply_endpoint(context_name: &str, host: &str) {
-        let contexts = Self::contexts();
-        let context = contexts.iter().find(|c| c.Name == context_name);
-        let operation = match context {
-            Some(_) => "update",
-            None => "create",
+        let operation = match Self::exists(&context_name) {
+            true => "update",
+            false => "create",
         };
         let host: &str = &format!("host={}", host);
         let args = ["context", operation, &context_name, "--docker", host];
@@ -31,12 +25,21 @@ impl DockerContext {
         };
     }
 
-    fn contexts() -> Vec<DockerContext> {
+    fn exists(context_name: &str) -> bool {
+        let binding = Self::ls();
+        let contexts: Vec<&str> = binding
+            .split("\n")
+            .filter(|c| c.len() > 4)
+            .map(|c| &c[2..c.len() - 2])
+            .collect();
+        contexts.contains(&context_name)
+    }
+
+    fn ls() -> String {
         let output = Command::new("docker")
-            .args(["context", "ls", "--format", "json"])
+            .args(["context", "ls", "--format", "'{{ json .Name }}'"])
             .output()
             .expect("could not list contexts");
-        let json = String::from_utf8(output.stdout).unwrap();
-        serde_json::from_str(&json).unwrap()
+        String::from_utf8(output.stdout).unwrap()
     }
 }
