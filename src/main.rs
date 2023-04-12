@@ -7,9 +7,14 @@ use std::process::Command;
 fn main() {
     let environment = Environment::build();
 
-    if environment.name == "init" {
+    if environment.name == "--init" {
         Conkerfile::write_fresh();
         println!("🌰 created Conkerfile");
+        exit(0);
+    }
+
+    if environment.name == "--version" {
+        println!("{}", env!("CARGO_PKG_VERSION"));
         exit(0);
     }
 

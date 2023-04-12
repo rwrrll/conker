@@ -44,7 +44,7 @@ impl Conkerfile {
         match fs::read_to_string("Conkerfile") {
             Ok(c) => c,
             Err(_) => {
-                eprintln!("🌰 No Conkerfile found 😢 use `conker init` to create one");
+                eprintln!("🌰 No Conkerfile found 😢 use `conker --init` to create one");
                 exit(1)
             }
         }
